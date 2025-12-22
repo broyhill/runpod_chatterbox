@@ -10,14 +10,14 @@ RUN apt-get update && apt-get install -y \
 RUN python -m pip install --no-deps chatterbox-tts
 
 WORKDIR /
+
 COPY requirements.txt /requirements.txt
 RUN pip install -r requirements.txt
+
 COPY rp_handler.py /
 
-RUN python -c "from chatterbox.tts import ChatterboxTTS; model = ChatterboxTTS.from_pretrained(device='cuda')"
+# Download model at build time using CPU (no GPU during build)
+RUN python -c "from chatterbox.tts import ChatterboxTTS; model = ChatterboxTTS.from_pretrained(device='cpu')"
 
 # Start the container
-CMD ["python3", "-u", "rp_handler.py"]
-
-
-
+CMD ["python", "-u", "rp_handler.py"]
